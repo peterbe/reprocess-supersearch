@@ -53,7 +53,7 @@ def find_and_reprocess(auth_token, urls):
 
     for i, group in enumerate(groups):
         print i * size, 'to', (i + 1) * size
-        response = requests.post(urlm, data={'crash_ids': group}, headers={
+        response = requests.post(url, data={'crash_ids': group}, headers={
             'Auth-Token': auth_token
         })
         assert response.status_code==200, response.status_code
