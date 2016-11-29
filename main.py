@@ -6,6 +6,20 @@ import time
 
 import click
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+
+
+def session_with_retries(url):
+    base_url = urlparse.urlparse(url).netloc
+    scheme = urlparse.urlparse(url).scheme
+
+    retries = Retry(total=32, backoff_factor=1, status_forcelist=[429])
+
+    s = requests.Session()
+    s.mount(scheme + '://' + base_url, HTTPAdapter(max_retries=retries))
+
+    return s
 
 
 @click.command()
@@ -53,7 +67,7 @@ def find_and_reprocess(auth_token, urls):
 
     for i, group in enumerate(groups):
         print i * size, 'to', (i + 1) * size
-        response = requests.post(url, data={'crash_ids': group}, headers={
+        response = session_with_retries(url).post(url, data={'crash_ids': group}, headers={
             'Auth-Token': auth_token
         })
         assert response.status_code==200, response.status_code
@@ -90,7 +104,7 @@ def find_crash_ids(url, auth_token, store, limit=500, offset=0):
             query[:100] + '...' if len(query) > 100 else query
         )
     )
-    response = requests.get(url, headers={'Auth-Token': auth_token})
+    response = session_with_retries(url).get(url, headers={'Auth-Token': auth_token})
     assert response.status_code == 200, response.status_code
     results = response.json()
     total = results['total']
