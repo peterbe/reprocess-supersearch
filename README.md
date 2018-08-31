@@ -1,3 +1,11 @@
+UPDATE 2018
+-----------
+
+The functionality of this has been integrated into the Socorro tooling now. 
+Please read https://socorro.readthedocs.io/en/latest/howto.html#reprocess-crashes instead if you want to reprocess a bunch of Socorro crashes.
+
+---
+
 Script to help when you use [SuperSearch](https://crash-stats.mozilla.com/search/?product=Firefox&_dont_run=1)
 and want to send the found crashes in for reprocessing.
 
